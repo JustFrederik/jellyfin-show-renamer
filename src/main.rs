@@ -237,11 +237,22 @@ fn extract_season_episode(filename: &str) -> (Option<i32>, Option<i32>) {
     }
 }
 
-fn extract_season_episode_dash(filename: &str) -> (Option<i32>, Option<i32>) {
+fn extract_episode_dash(filename: &str) -> (Option<i32>, Option<i32>) {
     let re = regex::Regex::new(r" - (\d+)").expect("Regex");
     if let Some(captures) = re.captures(filename) {
         let season = Some(1); // Fixed season value
         let episode = captures[1].parse().ok();
+        (season, episode)
+    } else {
+        (None, None)
+    }
+}
+
+fn extract_season_episode_dash(filename: &str) -> (Option<i32>, Option<i32>) {
+    let re = regex::Regex::new(r"S(\d+) - (\d+)").expect("Regex");
+    if let Some(captures) = re.captures(filename) {
+        let season = captures[1].parse().ok();
+        let episode = captures[2].parse().ok();
         (season, episode)
     } else {
         (None, None)
@@ -255,7 +266,12 @@ impl<'a> Default for Methods<'a> {
                 Method {
                     name: "dash",
                     pattern: " - {int}",
-                    func: extract_season_episode_dash,
+                    func: extract_episode_dash,
+                },
+                Method {
+                    name: "longdash",
+                    pattern: "S{int} - {int}",
+                    func: extract_episode_dash,
                 },
                 Method {
                     name: "default",
