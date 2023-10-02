@@ -227,8 +227,8 @@ fn prompt_for_season_episode(filename: &str) -> (Option<i32>, Option<i32>) {
 }
 
 fn extract_season_episode(filename: &str) -> (Option<i32>, Option<i32>) {
-    let re = regex::Regex::new(r"S(\d+)E(\d+)").expect("Regex");
-    if let Some(captures) = re.captures(filename) {
+    let re = regex::Regex::new(r"s(\d+)e(\d+)").expect("Regex");
+    if let Some(captures) = re.captures(&filename.to_lowercase()) {
         let season = captures[1].parse().ok();
         let episode = captures[2].parse().ok();
         (season, episode)
@@ -271,7 +271,7 @@ impl<'a> Default for Methods<'a> {
                 Method {
                     name: "longdash",
                     pattern: "S{int} - {int}",
-                    func: extract_episode_dash,
+                    func: extract_season_episode_dash,
                 },
                 Method {
                     name: "default",
