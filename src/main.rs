@@ -157,7 +157,13 @@ fn save(
     // Move the file to the output directory
     let new_file_path =
         Path::new(&output_dir).join(format!("Episode S{:02}E{:02}.{}", season, episode, ext));
-    fs::rename(file.path(), new_file_path)
+    rename(file.path(), new_file_path)
+}
+
+fn rename<P: AsRef<Path>>(from: P, to: P) -> io::Result<()> {
+    //fs::rename(file.path(), new_file_path)
+    fs::copy(&from, &to)?;
+    fs::remove_file(&from)
 }
 
 fn series_processing(
